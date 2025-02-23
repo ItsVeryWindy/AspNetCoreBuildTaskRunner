@@ -1,0 +1,55 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CliWrap" Version="3.7.1" />
+    <PackageReference Include="coverlet.collector" Version="6.0.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageReference Include="NUnit" Version="4.3.2" />
+    <PackageReference Include="NUnit.Analyzers" Version="4.6.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="NUnit3TestAdapter" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="NUnit.Framework" />
+  </ItemGroup>
+
+  <ItemGroup>
+	<None Remove="Resources\**\*" />
+	<Content Remove="Resources\**\*" />
+	<Compile Remove="Resources\**\*" />
+	<Content Include="Resources\**\*" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+	<Content Include="..\..\src\AspNetCoreBuildTaskRunner\bin\$(Configuration)\AspNetCoreBuildTaskRunner.$(Version).nupkg" CopyToOutputDirectory="PreserveNewest">
+		<Link>packages\AspNetCoreBuildTaskRunner.$(Version).nupkg</Link>
+	</Content>
+	<Content Include="..\AspNetCoreBuildTaskRunner.ExamplePlugin\bin\$(Configuration)\AspNetCoreBuildTaskRunner.ExamplePlugin.$(Version).nupkg" CopyToOutputDirectory="PreserveNewest">
+		<Link>packages\AspNetCoreBuildTaskRunner.ExamplePlugin.$(Version).nupkg</Link>
+	</Content>
+	<Content Include="..\AspNetCoreBuildTaskRunner.ExampleSharedLibrary\bin\$(Configuration)\AspNetCoreBuildTaskRunner.ExampleSharedLibrary.$(Version).nupkg" CopyToOutputDirectory="PreserveNewest">
+		<Link>packages\AspNetCoreBuildTaskRunner.ExampleSharedLibrary.$(Version).nupkg</Link>
+	</Content>
+	<Content Include="..\..\src\AspNetCoreBuildTaskRunner.Abstractions\bin\$(Configuration)\AspNetCoreBuildTaskRunner.Abstractions.$(Version).nupkg" CopyToOutputDirectory="PreserveNewest">
+		<Link>packages\AspNetCoreBuildTaskRunner.Abstractions.$(Version).nupkg</Link>
+	</Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AspNetCoreBuildTaskRunner.ExampleSharedLibrary\AspNetCoreBuildTaskRunner.ExampleSharedLibrary.csproj" />
+    <ProjectReference Include="..\AspNetCoreBuildTaskRunner.ExamplePlugin\AspNetCoreBuildTaskRunner.ExamplePlugin.csproj" />
+  </ItemGroup>
+</Project>

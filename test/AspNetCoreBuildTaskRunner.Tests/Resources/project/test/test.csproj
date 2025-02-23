@@ -1,0 +1,11 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<RestoreSources>$(MSBuildThisFileDirectory)../../packages</RestoreSources>
+		<RestorePackagesPath>$(MSBuildThisFileDirectory)../packages</RestorePackagesPath>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\web\web.csproj" />
+	</ItemGroup>
+</Project>

@@ -1,0 +1,5 @@
+﻿<Project>
+  <ItemGroup>
+	  <AspNetCoreBuildTaskRunnerPlugin Include="$(MSBuildThisFileDirectory)..\aspnetcorebuildtaskrunnerplugin\AspNetCoreBuildTaskRunner.ExamplePlugin.dll" />
+  </ItemGroup>
+</Project>

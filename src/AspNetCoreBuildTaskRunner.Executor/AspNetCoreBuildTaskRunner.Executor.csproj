@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+	<UseAppHost>false</UseAppHost>
+	<OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+	<None Include="build/*" PackagePath="build/*" />
+  </ItemGroup>
+	
+  <ItemGroup>
+	<FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+	
+  <ItemGroup>
+    <ProjectReference Include="..\AspNetCoreBuildTaskRunner.Abstractions\AspNetCoreBuildTaskRunner.Abstractions.csproj" />
+  </ItemGroup>
+</Project>

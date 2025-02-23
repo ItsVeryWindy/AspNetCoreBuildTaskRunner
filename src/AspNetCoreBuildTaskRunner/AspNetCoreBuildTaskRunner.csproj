@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.Build.NoTargets/3.7.56">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+	<None Include="$(OutputPath)\tools\**" PackagePath="tools" Pack="true" Visible="false" />
+	<Content Include="build\**" PackagePath="%(Identity)" Pack="true" />
+	<!--<ProjectReference Include="..\AspNetCoreBuildTaskRunner.Executor\AspNetCoreBuildTaskRunner.Executor.csproj">
+		<PrivateAssets>all</PrivateAssets>
+		<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+	</ProjectReference>-->
+	<ToolFramework Include="net8.0" />
+	<ToolFramework Include="net9.0" />
+  </ItemGroup>
+
+  <Target Name="MapProjectsToPublish">
+	<ItemGroup>
+	  <ProjectToPublish Include="..\AspNetCoreBuildTaskRunner.Executor\AspNetCoreBuildTaskRunner.Executor.csproj">
+	    <AdditionalProperties>
+			TargetFramework=%(ToolFramework.Identity);PublishDir=$(MSBuildThisFileDirectory)$(OutDir)tools\%(ToolFramework.Identity)\any;IntermediateOutputPath=$(MSBuildThisFileDirectory)$(IntermediateOutputPath)tools\%(ToolFramework.Identity)\any\
+		</AdditionalProperties>
+	  </ProjectToPublish>
+	</ItemGroup>
+  </Target>
+	
+  <Target Name="PublishBeforeBuild" BeforeTargets="PrepareForRun" DependsOnTargets="MapProjectsToPublish">
+	<MSBuild Projects="@(ProjectToPublish)" Targets="Publish" Properties="Configuration=$(Configuration)" />
+  </Target>
+
+  <Target Name="CleanPublish" AfterTargets="Clean" DependsOnTargets="MapProjectsToPublish">
+	<MSBuild Projects="@(ProjectToPublish)" Targets="_IncrementalCleanPublishDirectory" Properties="Configuration=$(Configuration)" />
+  </Target>
+</Project>
