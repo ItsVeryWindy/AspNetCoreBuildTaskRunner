@@ -49,6 +49,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\AspNetCoreBuildTaskRunner\AspNetCoreBuildTaskRunner.csproj" />
     <ProjectReference Include="..\AspNetCoreBuildTaskRunner.ExampleSharedLibrary\AspNetCoreBuildTaskRunner.ExampleSharedLibrary.csproj" />
     <ProjectReference Include="..\AspNetCoreBuildTaskRunner.ExamplePlugin\AspNetCoreBuildTaskRunner.ExamplePlugin.csproj" />
   </ItemGroup>

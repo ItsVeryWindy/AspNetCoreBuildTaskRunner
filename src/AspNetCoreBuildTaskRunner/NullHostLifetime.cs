@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Hosting;
 
-namespace AspNetCoreBuildTaskRunner.Executor;
+namespace AspNetCoreBuildTaskRunner;
 
 internal class NullHostLifetime : IHostLifetime
 {

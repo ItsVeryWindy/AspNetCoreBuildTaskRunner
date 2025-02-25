@@ -16,8 +16,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCoreBuildTaskRunner",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCoreBuildTaskRunner.Abstractions", "src\AspNetCoreBuildTaskRunner.Abstractions\AspNetCoreBuildTaskRunner.Abstractions.csproj", "{9024FB31-70CF-4C6C-8E12-DE2398C8EE09}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCoreBuildTaskRunner.Executor", "src\AspNetCoreBuildTaskRunner.Executor\AspNetCoreBuildTaskRunner.Executor.csproj", "{C0C492BA-98D9-43A7-A34B-5525F5B79BA3}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCoreBuildTaskRunner.ExamplePlugin", "test\AspNetCoreBuildTaskRunner.ExamplePlugin\AspNetCoreBuildTaskRunner.ExamplePlugin.csproj", "{623DD400-E7A0-4771-ABE8-51CF5C9BB7F4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCoreBuildTaskRunner.ExampleSharedLibrary", "test\AspNetCoreBuildTaskRunner.ExampleSharedLibrary\AspNetCoreBuildTaskRunner.ExampleSharedLibrary.csproj", "{DE1720CE-352A-4F37-A437-B1D36982876E}"
@@ -38,10 +36,6 @@ Global
 		{9024FB31-70CF-4C6C-8E12-DE2398C8EE09}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9024FB31-70CF-4C6C-8E12-DE2398C8EE09}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9024FB31-70CF-4C6C-8E12-DE2398C8EE09}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C0C492BA-98D9-43A7-A34B-5525F5B79BA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C0C492BA-98D9-43A7-A34B-5525F5B79BA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C0C492BA-98D9-43A7-A34B-5525F5B79BA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C0C492BA-98D9-43A7-A34B-5525F5B79BA3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{623DD400-E7A0-4771-ABE8-51CF5C9BB7F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{623DD400-E7A0-4771-ABE8-51CF5C9BB7F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{623DD400-E7A0-4771-ABE8-51CF5C9BB7F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -61,12 +55,8 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{E0B82E9B-84A7-428A-B795-3F5DFBE24F1A} = {41F5E9B1-FD8C-48DB-9939-1AADD51CBDB5}
 		{9024FB31-70CF-4C6C-8E12-DE2398C8EE09} = {41F5E9B1-FD8C-48DB-9939-1AADD51CBDB5}
-		{C0C492BA-98D9-43A7-A34B-5525F5B79BA3} = {41F5E9B1-FD8C-48DB-9939-1AADD51CBDB5}
 		{623DD400-E7A0-4771-ABE8-51CF5C9BB7F4} = {67601B78-7525-418B-B1B6-D4AF3027566A}
 		{DE1720CE-352A-4F37-A437-B1D36982876E} = {67601B78-7525-418B-B1B6-D4AF3027566A}
 		{E5BB632A-7FEF-4D60-8633-B0C16F2A6094} = {67601B78-7525-418B-B1B6-D4AF3027566A}
-	EndGlobalSection
-	GlobalSection(ProjectDependencies) = postSolution
-        {E0B82E9B-84A7-428A-B795-3F5DFBE24F1A} = {C0C492BA-98D9-43A7-A34B-5525F5B79BA3}
 	EndGlobalSection
 EndGlobal

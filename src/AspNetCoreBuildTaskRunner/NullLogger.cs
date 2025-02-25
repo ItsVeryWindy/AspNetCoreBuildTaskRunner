@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace AspNetCoreBuildTaskRunner.Executor;
+namespace AspNetCoreBuildTaskRunner;
 
 internal class NullLogger<T> : ILogger<T>
 {

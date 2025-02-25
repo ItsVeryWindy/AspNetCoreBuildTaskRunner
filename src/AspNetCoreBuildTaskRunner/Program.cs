@@ -1,5 +1,5 @@
-﻿using AspNetCoreBuildTaskRunner.Abstractions;
-using AspNetCoreBuildTaskRunner.Executor;
+﻿using AspNetCoreBuildTaskRunner;
+using AspNetCoreBuildTaskRunner.Abstractions;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;

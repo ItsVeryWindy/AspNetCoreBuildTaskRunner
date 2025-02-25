@@ -10,7 +10,7 @@
 	<_DotNetHostFilePath>$(DOTNET_HOST_PATH)</_DotNetHostFilePath>
   </PropertyGroup>
 	
-  <Target Name="ExecuteAspNetCoreBuildTaskRunnerExecutor" AfterTargets="Build">
-	<Exec Command="&quot;$(_DotNetHostFilePath)&quot; &quot;$(MSBuildThisFileDirectory)..\tools\$(TargetFramework)\any\AspNetCoreBuildTaskRunner.Executor.dll&quot; &quot;$(TargetPath)&quot; &quot;@(AspNetCoreBuildTaskRunnerPlugin)&quot;" />
+  <Target Name="ExecuteAspNetCoreBuildTaskRunner" AfterTargets="Build">
+	<Exec Command="&quot;$(_DotNetHostFilePath)&quot; &quot;$(MSBuildThisFileDirectory)..\tools\$(TargetFramework)\any\AspNetCoreBuildTaskRunner.dll&quot; &quot;$(TargetPath)&quot; &quot;@(AspNetCoreBuildTaskRunnerPlugin)&quot;" />
   </Target>
 </Project>

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Http.Features;
 
-namespace AspNetCoreBuildTaskRunner.Executor;
+namespace AspNetCoreBuildTaskRunner;
 
 internal class NullServer : IServer
 {

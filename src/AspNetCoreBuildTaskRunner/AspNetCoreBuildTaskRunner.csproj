@@ -1,35 +1,51 @@
-﻿<Project Sdk="Microsoft.Build.NoTargets/3.7.56">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+	<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+	<ImplicitUsings>enable</ImplicitUsings>
+	<Nullable>enable</Nullable>
+	<UseAppHost>false</UseAppHost>
+	<OutputType>Exe</OutputType>
 	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	<IntermediatePackDir>$(MSBuildProjectDirectory)\bin\$(Configuration)\pack\</IntermediatePackDir>
+	<PublishDir>$(IntermediatePackDir)\tools\$(TargetFramework)\any</PublishDir>
+	<IncludeBuildOutput>false</IncludeBuildOutput>
+	<BeforePack>PublishBeforePack; $(BeforePack)</BeforePack>
   </PropertyGroup>
 
   <ItemGroup>
-	<None Include="$(OutputPath)\tools\**" PackagePath="tools" Pack="true" Visible="false" />
-	<Content Include="build\**" PackagePath="%(Identity)" Pack="true" />
-	<!--<ProjectReference Include="..\AspNetCoreBuildTaskRunner.Executor\AspNetCoreBuildTaskRunner.Executor.csproj">
-		<PrivateAssets>all</PrivateAssets>
-		<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-	</ProjectReference>-->
-	<ToolFramework Include="net8.0" />
-	<ToolFramework Include="net9.0" />
+	<None Include="build\**" PackagePath="%(Identity)" Pack="true" />
   </ItemGroup>
 
-  <Target Name="MapProjectsToPublish">
-	<ItemGroup>
-	  <ProjectToPublish Include="..\AspNetCoreBuildTaskRunner.Executor\AspNetCoreBuildTaskRunner.Executor.csproj">
-	    <AdditionalProperties>
-			TargetFramework=%(ToolFramework.Identity);PublishDir=$(MSBuildThisFileDirectory)$(OutDir)tools\%(ToolFramework.Identity)\any;IntermediateOutputPath=$(MSBuildThisFileDirectory)$(IntermediateOutputPath)tools\%(ToolFramework.Identity)\any\
-		</AdditionalProperties>
-	  </ProjectToPublish>
-	</ItemGroup>
-  </Target>
-	
-  <Target Name="PublishBeforeBuild" BeforeTargets="PrepareForRun" DependsOnTargets="MapProjectsToPublish">
+  <ItemGroup>
+	<FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+	  <ProjectReference Include="..\AspNetCoreBuildTaskRunner.Abstractions\AspNetCoreBuildTaskRunner.Abstractions.csproj">
+		  <ExcludeAssets>all</ExcludeAssets>
+	  </ProjectReference>
+  </ItemGroup>
+
+  <Target Name="PublishBeforePack" DependsOnTargets="CleanPublish">
+	  <ItemGroup>
+		  <ToolFramework Include="$(TargetFrameworks)" />
+	  </ItemGroup>
+	  <Copy SourceFiles="_._" DestinationFolder="$(IntermediatePackDir)lib\%(ToolFramework.Identity)" />
+	  <ItemGroup>
+		  <None Include="$(IntermediatePackDir)\lib\**" PackagePath="lib" Pack="true" Visible="false" />
+		  <ProjectToPublish Include="$(MSBuildProjectFullPath)">
+			  <AdditionalProperties>
+				  TargetFramework=%(ToolFramework.Identity)
+			  </AdditionalProperties>
+		  </ProjectToPublish>
+	  </ItemGroup>
 	<MSBuild Projects="@(ProjectToPublish)" Targets="Publish" Properties="Configuration=$(Configuration)" />
+	  <ItemGroup>
+		  <None Include="$(IntermediatePackDir)\tools\**" PackagePath="tools" Pack="true" Visible="false" />
+	  </ItemGroup>
   </Target>
 
-  <Target Name="CleanPublish" AfterTargets="Clean" DependsOnTargets="MapProjectsToPublish">
-	<MSBuild Projects="@(ProjectToPublish)" Targets="_IncrementalCleanPublishDirectory" Properties="Configuration=$(Configuration)" />
+  <Target Name ="CleanPublish" AfterTargets="Clean">
+	<RemoveDir Directories="$(IntermediatePackDir)" />
   </Target>
 </Project>
