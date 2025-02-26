@@ -1,16 +1,16 @@
 ﻿<Project>
   <PropertyGroup Condition="'$(DOTNET_HOST_PATH)' == ''">
     <_DotNetHostPath>$(NetCoreRoot)</_DotNetHostPath>
-	<_DotNetHostFileName>dotnet</_DotNetHostFileName>
-	<_DotNetHostFileName Condition="'$(OS)' == 'Windows_NT'">dotnet.exe</_DotNetHostFileName>
-	<_DotNetHostFilePath>$(_DotNetHostPath)$(_DotNetHostFileName)</_DotNetHostFilePath>
+    <_DotNetHostFileName>dotnet</_DotNetHostFileName>
+    <_DotNetHostFileName Condition="'$(OS)' == 'Windows_NT'">dotnet.exe</_DotNetHostFileName>
+    <_DotNetHostFilePath>$(_DotNetHostPath)$(_DotNetHostFileName)</_DotNetHostFilePath>
   </PropertyGroup>
-	
+
   <PropertyGroup Condition="'$(DOTNET_HOST_PATH)' != ''">
-	<_DotNetHostFilePath>$(DOTNET_HOST_PATH)</_DotNetHostFilePath>
+    <_DotNetHostFilePath>$(DOTNET_HOST_PATH)</_DotNetHostFilePath>
   </PropertyGroup>
-	
+
   <Target Name="ExecuteAspNetCoreBuildTaskRunner" AfterTargets="Build">
-	<Exec Command="&quot;$(_DotNetHostFilePath)&quot; &quot;$(MSBuildThisFileDirectory)..\tools\$(TargetFramework)\any\AspNetCoreBuildTaskRunner.dll&quot; &quot;$(TargetPath)&quot; &quot;@(AspNetCoreBuildTaskRunnerPlugin)&quot;" />
+    <Exec Command="&quot;$(_DotNetHostFilePath)&quot; &quot;$(MSBuildThisFileDirectory)..\tools\$(TargetFramework)\any\AspNetCoreBuildTaskRunner.dll&quot; &quot;$(TargetPath)&quot; &quot;@(AspNetCoreBuildTaskRunnerPlugin)&quot;" />
   </Target>
 </Project>

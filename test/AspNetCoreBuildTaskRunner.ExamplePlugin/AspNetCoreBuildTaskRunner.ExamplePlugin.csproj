@@ -1,15 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-	<TargetFramework>net8.0</TargetFramework>
-	<Nullable>enable</Nullable>
-	<LangVersion>13.0</LangVersion>
-	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <LangVersion>13.0</LangVersion>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <IncludeBuildOutput>false</IncludeBuildOutput>
-	<NoWarn>NU5100;NU5128</NoWarn>
+    <NoWarn>NU5100;NU5128</NoWarn>
   </PropertyGroup>
-	
+
   <ItemGroup>
- 	<Content Include="build\**" PackagePath="%(Identity)" Pack="true" />
+    <Content Include="build\**" PackagePath="%(Identity)" Pack="true" />
   </ItemGroup>
 
   <ItemGroup>

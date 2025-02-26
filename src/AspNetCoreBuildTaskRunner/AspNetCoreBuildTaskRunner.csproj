@@ -1,51 +1,47 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-	<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
-	<ImplicitUsings>enable</ImplicitUsings>
-	<Nullable>enable</Nullable>
-	<UseAppHost>false</UseAppHost>
-	<OutputType>Exe</OutputType>
-	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-	<IntermediatePackDir>$(MSBuildProjectDirectory)\bin\$(Configuration)\pack\</IntermediatePackDir>
-	<PublishDir>$(IntermediatePackDir)\tools\$(TargetFramework)\any</PublishDir>
-	<IncludeBuildOutput>false</IncludeBuildOutput>
-	<BeforePack>PublishBeforePack; $(BeforePack)</BeforePack>
+    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <UseAppHost>false</UseAppHost>
+    <OutputType>Exe</OutputType>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <IntermediatePackDir>$(MSBuildProjectDirectory)\bin\$(Configuration)\pack\</IntermediatePackDir>
+    <PublishDir>$(IntermediatePackDir)\tools\$(TargetFramework)\any</PublishDir>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <BeforePack>PackExtraFiles; $(BeforePack)</BeforePack>
   </PropertyGroup>
 
   <ItemGroup>
-	<None Include="build\**" PackagePath="%(Identity)" Pack="true" />
+    <None Include="build\**" PackagePath="%(Identity)" Pack="true" />
   </ItemGroup>
 
   <ItemGroup>
-	<FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
   <ItemGroup>
-	  <ProjectReference Include="..\AspNetCoreBuildTaskRunner.Abstractions\AspNetCoreBuildTaskRunner.Abstractions.csproj">
-		  <ExcludeAssets>all</ExcludeAssets>
-	  </ProjectReference>
+    <ProjectReference Include="..\AspNetCoreBuildTaskRunner.Abstractions\AspNetCoreBuildTaskRunner.Abstractions.csproj">
+      <ExcludeAssets>all</ExcludeAssets>
+    </ProjectReference>
   </ItemGroup>
 
-  <Target Name="PublishBeforePack" DependsOnTargets="CleanPublish">
-	  <ItemGroup>
-		  <ToolFramework Include="$(TargetFrameworks)" />
-	  </ItemGroup>
-	  <Copy SourceFiles="_._" DestinationFolder="$(IntermediatePackDir)lib\%(ToolFramework.Identity)" />
-	  <ItemGroup>
-		  <None Include="$(IntermediatePackDir)\lib\**" PackagePath="lib" Pack="true" Visible="false" />
-		  <ProjectToPublish Include="$(MSBuildProjectFullPath)">
-			  <AdditionalProperties>
-				  TargetFramework=%(ToolFramework.Identity)
-			  </AdditionalProperties>
-		  </ProjectToPublish>
-	  </ItemGroup>
-	<MSBuild Projects="@(ProjectToPublish)" Targets="Publish" Properties="Configuration=$(Configuration)" />
-	  <ItemGroup>
-		  <None Include="$(IntermediatePackDir)\tools\**" PackagePath="tools" Pack="true" Visible="false" />
-	  </ItemGroup>
+  <Target Name="CreateEmptyContentItems" BeforeTargets="PrepareForRun">
+    <Copy SourceFiles="_._" DestinationFolder="$(IntermediatePackDir)lib\$(TargetFramework)" />
+    <ItemGroup>
+      <None Include="$(IntermediatePackDir)lib\$(TargetFramework)\_._" />
+    </ItemGroup>
   </Target>
 
-  <Target Name ="CleanPublish" AfterTargets="Clean">
-	<RemoveDir Directories="$(IntermediatePackDir)" />
+  <Target Name="PublishAfterBuild" AfterTargets="Build" DependsOnTargets="Publish" Condition="'$(TargetFramework)' != ''" />
+
+  <Target Name="PackExtraFiles">
+    <ItemGroup>
+      <_TargetFrameworks Include="$(TargetFrameworks)" />
+      <None Include="$(IntermediatePackDir)lib\%(_TargetFrameworks.Identity)\_._" PackagePath="lib\%(_TargetFrameworks.Identity)\_._" Pack="true" />
+      <None Include="$(IntermediatePackDir)tools\%(_TargetFrameworks.Identity)\**" PackagePath="tools\%(_TargetFrameworks.Identity)" Pack="true" />
+    </ItemGroup>
   </Target>
+
+  <Target Name ="CleanPublish" AfterTargets="Clean" DependsOnTargets="_IncrementalCleanPublishDirectory" Condition="'$(TargetFramework)' != ''" />
 </Project>
