@@ -1,16 +1,29 @@
 ﻿<Project>
-  <PropertyGroup Condition="'$(DOTNET_HOST_PATH)' == ''">
-    <_DotNetHostPath>$(NetCoreRoot)</_DotNetHostPath>
-    <_DotNetHostFileName>dotnet</_DotNetHostFileName>
-    <_DotNetHostFileName Condition="'$(OS)' == 'Windows_NT'">dotnet.exe</_DotNetHostFileName>
-    <_DotNetHostFilePath>$(_DotNetHostPath)$(_DotNetHostFileName)</_DotNetHostFilePath>
-  </PropertyGroup>
+  <Target Name="AspNetCoreBuildTaskRunnerProperties">
+    <PropertyGroup Condition="'$(DOTNET_HOST_PATH)' == ''">
+      <_DotNetHostPath>$(NetCoreRoot)</_DotNetHostPath>
+      <_DotNetHostFileName>dotnet</_DotNetHostFileName>
+      <_DotNetHostFileName Condition="'$(OS)' == 'Windows_NT'">dotnet.exe</_DotNetHostFileName>
+      <_DotNetHostFilePath>$(_DotNetHostPath)$(_DotNetHostFileName)</_DotNetHostFilePath>
+    </PropertyGroup>
 
-  <PropertyGroup Condition="'$(DOTNET_HOST_PATH)' != ''">
-    <_DotNetHostFilePath>$(DOTNET_HOST_PATH)</_DotNetHostFilePath>
-  </PropertyGroup>
+    <PropertyGroup Condition="'$(DOTNET_HOST_PATH)' != ''">
+      <_DotNetHostFilePath>$(DOTNET_HOST_PATH)</_DotNetHostFilePath>
+    </PropertyGroup>
 
-  <Target Name="ExecuteAspNetCoreBuildTaskRunner" AfterTargets="Build">
-    <Exec Command="&quot;$(_DotNetHostFilePath)&quot; &quot;$(MSBuildThisFileDirectory)..\tools\$(TargetFramework)\any\AspNetCoreBuildTaskRunner.dll&quot; &quot;$(TargetPath)&quot; &quot;@(AspNetCoreBuildTaskRunnerPlugin)&quot;" />
+    <PropertyGroup>
+      <_AspNetCoreBuildTaskRunnerExecPath>&quot;$(_DotNetHostFilePath)&quot; &quot;$(MSBuildThisFileDirectory)..\tools\$(TargetFramework)\any\AspNetCoreBuildTaskRunner.dll&quot;</_AspNetCoreBuildTaskRunnerExecPath>
+    </PropertyGroup>
+  </Target>
+  
+  <Target Name="ExecuteAspNetCoreBuildTaskRunnerProjectReferences" DependsOnTargets="AspNetCoreBuildTaskRunnerProperties" AfterTargets="ResolveProjectReferences">
+    <ItemGroup>
+      <WebApplicationAssemblies Include="@(_ResolvedProjectReferencePaths)" Condition="'%(WebApplication)' == 'true'" />
+    </ItemGroup>
+    <Exec Condition="@(WebApplicationAssemblies->Count()) > 0" Command="$(_AspNetCoreBuildTaskRunnerExecPath) &quot;@(WebApplicationAssemblies)&quot; &quot;@(AspNetCoreBuildTaskRunnerPlugin)&quot;" />
+  </Target>
+  
+  <Target Name="ExecuteAspNetCoreBuildTaskRunnerAfterBuild" DependsOnTargets="AspNetCoreBuildTaskRunnerProperties" AfterTargets="Build">
+    <Exec Condition="@(WebApplicationAssemblies->Count()) == 0" Command="$(_AspNetCoreBuildTaskRunnerExecPath) &quot;$(TargetPath)&quot; &quot;@(AspNetCoreBuildTaskRunnerPlugin)&quot;" />
   </Target>
 </Project>

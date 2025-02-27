@@ -6,6 +6,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\web\web.csproj" />
+		<ProjectReference Include="..\web\web.csproj" WebApplication="true" />
 	</ItemGroup>
 </Project>

@@ -5,13 +5,14 @@ namespace AspNetCoreBuildTaskRunner.Tests
 {
     public class IntegrationTests
     {
-        [Test]
-        public async Task ShouldExecuteAspNetCoreBuilderTaskRunner()
+        [TestCase("project/test/test.csproj")]
+        [TestCase("project/web/web.csproj")]
+        public async Task ShouldExecuteAspNetCoreBuilderTaskRunner(string project)
         {
             WriteCSharpProject();
 
             var result = await Cli.Wrap("dotnet")
-                .WithArguments("build -bl:msbuild.binlog project/web/web.csproj")
+                .WithArguments($"build -bl:msbuild.binlog {project}")
                 .WithValidation(CommandResultValidation.None)
                 .ExecuteBufferedAsync();
 

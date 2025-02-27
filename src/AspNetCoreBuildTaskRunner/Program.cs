@@ -14,75 +14,78 @@ Console.CancelKeyPress += (s, e) =>
     e.Cancel = true;
 };
 
-var assemblyPath = args[0];
-var pluginPaths = args[1..];
+var assemblyPaths = args[0].Split(';');
+var pluginPaths = args[1].Split(';');
 
-var context = new CustomAssemblyLoadContext(assemblyPath);
+foreach (var assemblyPath in assemblyPaths)
+{
+    var context = new CustomAssemblyLoadContext(assemblyPath);
 
-if (context.Assembly.EntryPoint is null)
-    return 0;
+    if (context.Assembly.EntryPoint is null)
+        return 0;
 
-using var scope = context.EnterContextualReflection();
+    using var scope = context.EnterContextualReflection();
 
-var pluginContexts = pluginPaths
-    .Select(x => new CustomAssemblyLoadContext(x, context))
-    .Select(x => x.Assembly)
-    .SelectMany(x => x.ExportedTypes)
-    .Where(x => x.GetInterfaces().Any(y => y == typeof(IAspNetCoreBuildTaskRunnerPlugin)))
-    .Select(x => (IAspNetCoreBuildTaskRunnerPlugin)Activator.CreateInstance(x)!)
-    .ToList();
+    var pluginContexts = pluginPaths
+        .Select(x => new CustomAssemblyLoadContext(x, context))
+        .Select(x => x.Assembly)
+        .SelectMany(x => x.ExportedTypes)
+        .Where(x => x.GetInterfaces().Any(y => y == typeof(IAspNetCoreBuildTaskRunnerPlugin)))
+        .Select(x => (IAspNetCoreBuildTaskRunnerPlugin)Activator.CreateInstance(x)!)
+        .ToList();
 
-var manualReset = new ManualResetEventSlim(false);
+    var manualReset = new ManualResetEventSlim(false);
 
-var factory = HostFactoryResolver.ResolveHostFactory(
-    context.Assembly,
-    Debugger.IsAttached ? Timeout.InfiniteTimeSpan : TimeSpan.FromSeconds(10),
-    configureHostBuilder: hb =>
-    {
-        var hostBuilder = (IHostBuilder)hb;
-
-        hostBuilder.ConfigureServices(sc =>
+    var factory = HostFactoryResolver.ResolveHostFactory(
+        context.Assembly,
+        Debugger.IsAttached ? Timeout.InfiniteTimeSpan : TimeSpan.FromSeconds(10),
+        configureHostBuilder: hb =>
         {
-            sc
-                .AddSingleton<IServer, NullServer>()
-                .AddSingleton<IHostLifetime, NullHostLifetime>()
-                .AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
+            var hostBuilder = (IHostBuilder)hb;
 
-            for (var i = sc.Count - 1; i >= 0; i--)
+            hostBuilder.ConfigureServices(sc =>
             {
-                var service = sc[i];
+                sc
+                    .AddSingleton<IServer, NullServer>()
+                    .AddSingleton<IHostLifetime, NullHostLifetime>()
+                    .AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
 
-                if (service is IHostedService)
-                    sc.RemoveAt(i);
-            }
-        });
-    },
-    entrypointCompleted: (ex) =>
+                for (var i = sc.Count - 1; i >= 0; i--)
+                {
+                    var service = sc[i];
+
+                    if (service is IHostedService)
+                        sc.RemoveAt(i);
+                }
+            });
+        },
+        entrypointCompleted: (ex) =>
+        {
+            manualReset.Set();
+        },
+        stopApplication: false);
+
+    if (factory is null)
+        return 0;
+
+    using var host = (IHost)factory([$"--{HostDefaults.ApplicationKey}={context.Assembly.GetName().FullName}"]);
+
+    if (host is null)
     {
-        manualReset.Set();
-    },
-    stopApplication: false);
+        Console.WriteLine("No host detected.");
+        return 1;
+    }
 
-if (factory is null)
-    return 0;
+    var applicationLifetime = host.Services.GetRequiredService<IHostApplicationLifetime>();
 
-using var host = (IHost)factory([$"--{HostDefaults.ApplicationKey}={context.Assembly.GetName().FullName}"]);
+    using var registration = applicationLifetime.ApplicationStarted.Register(manualReset.Set);
 
-if (host is null)
-{
-    Console.WriteLine("No host detected.");
-    return 1;
-}
+    manualReset.Wait();
 
-var applicationLifetime = host.Services.GetRequiredService<IHostApplicationLifetime>();
-
-using var registration = applicationLifetime.ApplicationStarted.Register(manualReset.Set);
-
-manualReset.Wait();
-
-foreach (var pluginContext in pluginContexts)
-{
-    await pluginContext.ExecuteAsync(host.Services, cts.Token);
+    foreach (var pluginContext in pluginContexts)
+    {
+        await pluginContext.ExecuteAsync(host.Services, cts.Token);
+    }
 }
 
 return 0;
